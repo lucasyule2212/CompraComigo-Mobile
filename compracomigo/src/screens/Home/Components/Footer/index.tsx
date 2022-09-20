@@ -25,7 +25,9 @@ import { useCarrinhoStore } from "../../../../storage/carrinho";
 // import { Container } from './styles';
 
 const Footer: React.FC = () => {
-  const { orcamento, setOrcamento } = useOrcamentoStore((state) => state);
+  const { orcamento, setOrcamento, setOriginalOrcamento } = useOrcamentoStore(
+    (state) => state
+  );
   const { carrinho } = useCarrinhoStore((state) => state);
 
   const [orcamentoValue, setOrcamentoValue] = useState<string | null>(null);
@@ -47,8 +49,9 @@ const Footer: React.FC = () => {
     try {
       const parsedOrcamento = Number(orcamento) - carrinho.valorTotal;
       setOrcamento(parsedOrcamento);
+      setOriginalOrcamento(Number(orcamento));
       handleCloseSheet();
-      await api.post(apiRoutes.setOrcamento(parsedOrcamento));
+      // await api.post(apiRoutes.setOrcamento(parsedOrcamento));
     } catch (error) {
       console.log(error);
     }

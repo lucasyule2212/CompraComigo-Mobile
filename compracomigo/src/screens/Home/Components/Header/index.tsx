@@ -1,12 +1,14 @@
 import { Flex, Heading, Button, Text } from "native-base";
 import MainButton from "../../../../components/MainButton";
 import { useCarrinhoStore } from "../../../../storage/carrinho";
+import { useOrcamentoStore } from "../../../../storage/orcamento";
 import { globalStyles } from "../../../../styles/globalStyles";
 
 // import { Container } from './styles';
 
 const Header: React.FC = () => {
   const { clearCarrinho } = useCarrinhoStore((state) => state);
+  const { resetOrcamento } = useOrcamentoStore((state) => state);
   return (
     <Flex
       justify="center"
@@ -26,7 +28,10 @@ const Header: React.FC = () => {
       <Flex justify="end">
         <MainButton
           colorScheme="secondary"
-          onPress={() => clearCarrinho()}
+          onPress={() => {
+            resetOrcamento();
+            clearCarrinho();
+          }}
           text="Limpar"
           width={20}
         />
