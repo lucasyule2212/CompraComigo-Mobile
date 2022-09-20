@@ -12,21 +12,24 @@ import uuid from "react-native-uuid";
 import Home from "./src/screens/Home";
 import { api } from "./src/services/api";
 import { useSessionStore } from "./src/storage/session";
-import setSession from "./src/utils/apiRoutes";
+import routes from "./src/utils/apiRoutes";
 
 export default function App() {
   const setSessionId = useSessionStore((state) => state.setSessionId);
   useEffect(() => {
     const sessionId = uuid.v4().toString();
-    api.defaults.headers.common["session-id"] = sessionId;
-    async () => {
+    const saveSession = async () => {
       try {
         await api.post(setSession.setSession(sessionId));
+
+        const session = await api.post(routes.setSession(sessionId));
+
         setSessionId(sessionId);
       } catch (error) {
         console.log(error);
       }
     };
+    saveSession();
   }, []);
 
   const DismissKeyboard = ({ children }: { children: JSX.Element }) => (
