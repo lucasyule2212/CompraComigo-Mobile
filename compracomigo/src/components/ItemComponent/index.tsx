@@ -15,6 +15,8 @@ import { globalStyles } from "../../styles/globalStyles";
 import ItemQtdButton from "../ItemQtdButton";
 import MainButton from "../MainButton";
 import { AntDesign } from "@expo/vector-icons";
+import { api } from "../../services/api";
+import { useSugestaoModalStore } from "../../storage/sugestaoModal";
 // import { Container } from './styles';
 
 type ItemComponentProps = {
@@ -24,10 +26,23 @@ type ItemComponentProps = {
 const ItemComponent: React.FC<ItemComponentProps> = ({
   item,
 }: ItemComponentProps) => {
-  const { priorizarItem } = useCarrinhoStore((state) => state);
+  const { priorizarItem, setSuggestedItems, setToChangeCarrinhoItemID } =
+    useCarrinhoStore((state) => state);
+  const { setVisible } = useSugestaoModalStore((state) => state);
   const handlePriorizarItem = useCallback((item: itemCarrinho) => {
     priorizarItem(item);
   }, []);
+
+  async function handleSugestItems() {
+    try {
+      const { data } = await api.get(`/produtos/sugestoes/${item.id}`);
+      setToChangeCarrinhoItemID(item.id);
+      setSuggestedItems(data);
+      setVisible(true);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   return (
     <Flex
@@ -37,6 +52,7 @@ const ItemComponent: React.FC<ItemComponentProps> = ({
       backgroundColor="white"
       width="100%"
       direction="row"
+      alignItems="center"
     >
       <Box width={20} height={20}>
         <Image
@@ -47,9 +63,15 @@ const ItemComponent: React.FC<ItemComponentProps> = ({
           rounded="sm"
         />
       </Box>
-      <Flex direction="column" ml={4}>
+      <Flex direction="column" width="100%" ml={4}>
         <Flex width="70%" direction="row" justifyContent="space-between">
-          <Heading color={globalStyles.secondaryTextColor}>{item.nome}</Heading>
+          <Heading
+            color={globalStyles.secondaryTextColor}
+            maxW={200}
+            isTruncated
+          >
+            {item.nome}
+          </Heading>
 
           {/* DESENVOLVER BOTÃO DE PRIORIZAR ITEM */}
           <IconButton
@@ -76,7 +98,7 @@ const ItemComponent: React.FC<ItemComponentProps> = ({
             text="Sugestões"
             colorScheme="secondary"
             width={20}
-            onPress={() => {}}
+            onPress={handleSugestItems}
             fontSize="xs"
           />
           <ItemQtdButton qtd={item.quantidade} item={item} />

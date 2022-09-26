@@ -6,6 +6,7 @@ type orcamentoState = {
   setOrcamento: (orcamento: number) => void;
   setOriginalOrcamento: (orcamento: number) => void;
   resetOrcamento: () => void;
+  clearOrcamento: () => void;
 };
 
 // Define a type with all your state selectors and setters
@@ -26,6 +27,11 @@ const useStore = create<orcamentoState>((set) => ({
     set((state) => ({
       orcamento: state.originalOrcamento,
       originalOrcamento: state.originalOrcamento,
+    })),
+  clearOrcamento: () =>
+    set((state) => ({
+      orcamento: null,
+      originalOrcamento: null,
     })),
 }));
 

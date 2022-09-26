@@ -7,6 +7,7 @@ import {
   Text,
   IconButton,
   Icon,
+  useDisclose,
 } from "native-base";
 import { useCarrinhoStore } from "../../../../storage/carrinho";
 import { globalStyles } from "../../../../styles/globalStyles";
@@ -19,17 +20,24 @@ import { FlatList, View, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useCallback } from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useLeitorBarraStore } from "../../../../storage/leitorBarra";
+import SuggestedItemsModal from "../../../../components/SugestedItemsModal";
 
 // import { Container } from './styles';
 
 const Body: React.FC = () => {
-  const { carrinho } = useCarrinhoStore((state) => state);
+  const { carrinho, suggestedItems } = useCarrinhoStore((state) => state);
+
+  const { askForCameraPermission } = useLeitorBarraStore((state) => state);
   const renderItem = useCallback(
     ({ item }: { item: any }) => <ItemComponent item={item} />,
     []
   );
+
   return (
     <Box height="70%" p={4}>
+      {suggestedItems.length > 0 && <SuggestedItemsModal />}
+
       {carrinho.itens.length === 0 ? (
         <Flex width="100%" align="center" justify="center" mb={6} mt={24}>
           <Image source={carrinhoImage} alt="Imagem carrinho" />
@@ -75,7 +83,9 @@ const Body: React.FC = () => {
             color: "white",
           }}
           _pressed={{ bgColor: "orange.400" }}
-          onPress={() => {}}
+          onPress={() => {
+            askForCameraPermission();
+          }}
         />
       </Box>
     </Box>

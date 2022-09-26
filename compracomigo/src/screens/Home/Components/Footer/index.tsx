@@ -24,7 +24,11 @@ import { useCarrinhoStore } from "../../../../storage/carrinho";
 
 // import { Container } from './styles';
 
-const Footer: React.FC = () => {
+type FooterProps = {
+  toEndScreen: () => void;
+};
+
+const Footer: React.FC<FooterProps> = ({ toEndScreen }) => {
   const { orcamento, setOrcamento, setOriginalOrcamento } = useOrcamentoStore(
     (state) => state
   );
@@ -81,7 +85,12 @@ const Footer: React.FC = () => {
             })}
           </Heading>
         </Flex>
-        <MainButton text={"Finalizar"} onPress={() => {}} />
+        <MainButton
+          text={"Finalizar"}
+          onPress={() => {
+            toEndScreen();
+          }}
+        />
       </Flex>
 
       <Flex mt={1} direction="row" align="center" width="100%">
