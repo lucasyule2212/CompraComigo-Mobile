@@ -10,6 +10,7 @@ Repositório do App Mobile Compra Comigo desenvolvido para a cadeira de Projetã
 - No terminal, utilizar o comando `npm install`.
 - Após a instalação das dependências:
 	- Para rodar o projeto basta executar o comando no terminal `npm start` .
+- Adicionar um arquivo .env com a variavel LOCAL_IP contendo o ip da máquina local (que está rodando o server NodeJS).
 - No seu smartphone (iOS ou Android), baixar o app **ExpoGO**
 - Criar uma conta Expo e fazer o login.
 - No **terminal** será mostrado um QRCode para ser aberto lido pela câmera do celular e aberto com o app **ExpoGO**.
