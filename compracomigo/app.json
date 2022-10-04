@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "compracomigo",
+    "name": "Compra Comigo",
     "slug": "compracomigo",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -14,17 +14,20 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.compracomigo",
+      "buildNumber": "1.0.0"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+
+      "package": "com.compracomigo",
+      "versionCode": 1
     },
     "web": {
       "favicon": "./assets/favicon.png"
