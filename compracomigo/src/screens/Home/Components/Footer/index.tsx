@@ -21,6 +21,7 @@ import { useOrcamentoStore } from "../../../../storage/orcamento";
 import { api } from "../../../../services/api";
 import apiRoutes from "../../../../utils/apiRoutes";
 import { useCarrinhoStore } from "../../../../storage/carrinho";
+import { DismissKeyboard } from "../../../../../App";
 
 // import { Container } from './styles';
 
@@ -39,7 +40,7 @@ const Footer: React.FC<FooterProps> = ({ toEndScreen }) => {
   const toast = useToast();
 
   const bottomSheetRef = useRef<BottomSheetModal>(null);
-  const snapPoints = useMemo(() => ["25%", "50%"], []);
+  const snapPoints = useMemo(() => ["35%", "55%"], []);
   const handleOpenSheet = useCallback(
     () => bottomSheetRef.current?.present(1),
     []
@@ -60,7 +61,7 @@ const Footer: React.FC<FooterProps> = ({ toEndScreen }) => {
       console.log(error);
     }
   };
-
+  const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
   return (
     <Flex
       direction="column"
@@ -117,86 +118,93 @@ const Footer: React.FC<FooterProps> = ({ toEndScreen }) => {
         {/*  */}
         <BottomSheetModal
           ref={bottomSheetRef}
-          index={1}
+          index={isKeyboardOpen ? 1 : 0}
           snapPoints={snapPoints}
+          backgroundComponent={({ style }) => (
+            <View style={[style, { backgroundColor: "none" }]} />
+          )}
         >
-          <View
-            style={{
-              backgroundColor: globalStyles.primaryColor,
-              height: "100%",
-              borderTopRightRadius: 50,
-              borderTopLeftRadius: 50,
-              padding: 25,
-            }}
-          >
-            <Heading color={globalStyles.mainTextColor}>
-              Defina um orçamento:
-            </Heading>
-            <Flex direction="row" mt={5} width="100%">
-              <Heading color={globalStyles.mainTextColor} opacity={50}>
-                R${" "}
+          <DismissKeyboard>
+            <View
+              style={{
+                backgroundColor: globalStyles.primaryColor,
+                height: "100%",
+                borderTopRightRadius: 50,
+                borderTopLeftRadius: 50,
+                padding: 25,
+              }}
+            >
+              <Heading color={globalStyles.mainTextColor}>
+                Defina um orçamento:
               </Heading>
-              <Input
-                borderColor="transparent"
-                borderBottomColor="white"
-                borderBottomWidth={3}
-                size="2xl"
-                placeholder="500"
-                placeholderTextColor="rgba(255, 255, 255, 0.452)"
-                width="80%"
-                fontWeight="bold"
-                keyboardType="numeric"
-                color={globalStyles.mainTextColor}
-                padding={0}
-                _focus={{ borderColor: "transparent" }}
-                onChangeText={(text) => setOrcamentoValue(text)}
-              />
-            </Flex>
-            <Flex alignItems={"flex-end"} marginTop={4} width="90%">
-              <MainButton
-                width={40}
-                text="Definir"
-                onPress={() => {
-                  if (orcamentoValue) {
-                    handleSetOrcamento(orcamentoValue);
-                  } else {
-                    toast.show({
-                      title: "Oops!",
-                      description: "Você precisa definir um valor primeiro",
-                      variant: "subtle",
-                      placement: "bottom",
-                      render: () => {
-                        return (
-                          <Alert status="warning" colorScheme="warning">
-                            <VStack space={2} flexShrink={1} w="100%">
-                              <HStack
-                                flexShrink={1}
-                                space={2}
-                                alignItems="center"
-                                justifyContent="space-between"
-                              >
+              <Flex direction="row" mt={5} width="100%">
+                <Heading color={globalStyles.mainTextColor} opacity={50}>
+                  R${" "}
+                </Heading>
+                <Input
+                  borderColor="transparent"
+                  borderBottomColor="white"
+                  borderBottomWidth={3}
+                  size="2xl"
+                  placeholder="500"
+                  placeholderTextColor="rgba(255, 255, 255, 0.452)"
+                  width="80%"
+                  fontWeight="bold"
+                  keyboardType="numeric"
+                  color={globalStyles.mainTextColor}
+                  padding={0}
+                  _focus={{ borderColor: "transparent" }}
+                  onFocus={() => setIsKeyboardOpen(true)}
+                  onBlur={() => setIsKeyboardOpen(false)}
+                  onChangeText={(text) => setOrcamentoValue(text)}
+                />
+              </Flex>
+              <Flex alignItems={"flex-end"} marginTop={4} width="90%">
+                <MainButton
+                  width={40}
+                  text="Definir"
+                  onPress={() => {
+                    if (orcamentoValue) {
+                      handleSetOrcamento(orcamentoValue);
+                    } else {
+                      toast.show({
+                        title: "Oops!",
+                        description: "Você precisa definir um valor primeiro",
+                        variant: "subtle",
+                        placement: "bottom",
+                        render: () => {
+                          return (
+                            <Alert status="warning" colorScheme="warning">
+                              <VStack space={2} flexShrink={1} w="100%">
                                 <HStack
-                                  space={2}
                                   flexShrink={1}
+                                  space={2}
                                   alignItems="center"
+                                  justifyContent="space-between"
                                 >
-                                  <Alert.Icon />
-                                  <Text color={"black"}>
-                                    Oops! Você precisa definir um valor primeiro
-                                    😉!
-                                  </Text>
+                                  <HStack
+                                    space={2}
+                                    flexShrink={1}
+                                    alignItems="center"
+                                  >
+                                    <Alert.Icon />
+                                    <Text color={"black"}>
+                                      Oops! Você precisa definir um valor
+                                      primeiro 😉!
+                                    </Text>
+                                  </HStack>
                                 </HStack>
-                              </HStack>
-                            </VStack>
-                          </Alert>
-                        );
-                      },
-                    });
-                  }
-                }}
-              />
-            </Flex>
-          </View>
+                              </VStack>
+                            </Alert>
+                          );
+                        },
+                      });
+                    }
+                  }}
+                />
+              </Flex>
+            </View>
+          </DismissKeyboard>
         </BottomSheetModal>
       </Flex>
     </Flex>

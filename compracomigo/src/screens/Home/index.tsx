@@ -1,5 +1,6 @@
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { View } from "react-native";
+import { DismissKeyboard } from "../../../App";
 import { RootParamList } from "../../routes/app.routes";
 import { useCarrinhoStore } from "../../storage/carrinho";
 import { useLeitorBarraStore } from "../../storage/leitorBarra";
@@ -26,17 +27,19 @@ const Home: React.FC<HomeProps> = ({ navigation }: HomeProps) => {
   }
 
   return (
-    <View style={styles.container}>
-      {hasPermission ? (
-        <BarcodeScan />
-      ) : (
-        <>
-          <Header />
-          <Body />
-          <Footer toEndScreen={navigateToFinal} />
-        </>
-      )}
-    </View>
+    <DismissKeyboard>
+      <View style={styles.container}>
+        {hasPermission ? (
+          <BarcodeScan />
+        ) : (
+          <>
+            <Header />
+            <Body />
+            <Footer toEndScreen={navigateToFinal} />
+          </>
+        )}
+      </View>
+    </DismissKeyboard>
   );
 };
 
