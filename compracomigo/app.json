@@ -25,7 +25,6 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-
       "package": "com.compracomigo",
       "versionCode": 1
     },

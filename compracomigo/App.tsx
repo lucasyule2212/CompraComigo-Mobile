@@ -10,24 +10,22 @@ import {
 
 import { Routes } from "./src/routes";
 
-export default function App() {
-  const DismissKeyboard = ({ children }: { children: JSX.Element }) => (
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      {children}
-    </TouchableWithoutFeedback>
-  );
+export const DismissKeyboard = ({ children }: { children: JSX.Element }) => (
+  <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+    {children}
+  </TouchableWithoutFeedback>
+);
 
+export default function App() {
   return (
-    <DismissKeyboard>
-      <NativeBaseProvider>
-        <BottomSheetModalProvider>
-          <View style={styles.container}>
-            <StatusBar style="auto" />
-          </View>
-          <Routes />
-        </BottomSheetModalProvider>
-      </NativeBaseProvider>
-    </DismissKeyboard>
+    <NativeBaseProvider>
+      <BottomSheetModalProvider>
+        <View style={styles.container}>
+          <StatusBar style="auto" />
+        </View>
+        <Routes />
+      </BottomSheetModalProvider>
+    </NativeBaseProvider>
   );
 }
 
