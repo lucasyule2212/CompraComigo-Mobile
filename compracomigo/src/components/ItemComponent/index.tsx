@@ -6,6 +6,7 @@ import {
   Button,
   IconButton,
   Icon,
+  Spinner,
 } from "native-base";
 import React, { useCallback } from "react";
 import { itemCarrinho, useCarrinhoStore } from "../../storage/carrinho";
@@ -26,19 +27,33 @@ type ItemComponentProps = {
 const ItemComponent: React.FC<ItemComponentProps> = ({
   item,
 }: ItemComponentProps) => {
-  const { priorizarItem, setSuggestedItems, setToChangeCarrinhoItemID } =
-    useCarrinhoStore((state) => state);
-  const { setVisible } = useSugestaoModalStore((state) => state);
+  const {
+    priorizarItem,
+    setSuggestedItems,
+    setToChangeCarrinhoItemID,
+    priorizarFirstTime,
+    setPriorizarFirstTime,
+    setPriorizarModalVisible
+  } = useCarrinhoStore((state) => state);
+  const { setVisible, loading, setLoading } = useSugestaoModalStore(
+    (state) => state
+  );
   const handlePriorizarItem = useCallback((item: itemCarrinho) => {
+    if (priorizarFirstTime===false) {
+      setPriorizarFirstTime();
+      setPriorizarModalVisible(true);
+    }
     priorizarItem(item);
   }, []);
 
   async function handleSugestItems() {
     try {
+      setLoading(true);
+      setVisible(true);
       const { data } = await api.get(`/produtos/sugestoes/${item.id}`);
       setToChangeCarrinhoItemID(item.id);
       setSuggestedItems(data);
-      setVisible(true);
+      setLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -61,6 +76,7 @@ const ItemComponent: React.FC<ItemComponentProps> = ({
           src={item.image}
           alt={item.nome}
           rounded="sm"
+          onLoadStart={() => <Spinner color="muted.500" />}
         />
       </Box>
       <Flex direction="column" width="100%" ml={4}>

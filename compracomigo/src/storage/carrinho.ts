@@ -28,6 +28,12 @@ export interface carrinho {
 
 type carrinhoState = {
   carrinho: carrinho;
+  loading: boolean;
+  priorizarFirstTime: boolean;
+  setPriorizarFirstTime: () => void;
+  priorizarModalVisible: boolean;
+  setPriorizarModalVisible: (value: boolean) => void;
+  setLoading: (value: boolean) => void;
   addItem: (item: itemCarrinho) => void;
   reduceItem: (item: itemCarrinho) => void;
   removeItem: (id: number) => void;
@@ -90,6 +96,12 @@ type carrinhoState = {
 // Define a type with all your state selectors and setters
 const useStore = create<carrinhoState>((set) => ({
   carrinho: { itens: [], valorTotal: 0 },
+  loading: false,
+  priorizarFirstTime: false,
+  priorizarModalVisible: false,
+  setPriorizarModalVisible: (value) => set({ priorizarModalVisible: value }),
+  setPriorizarFirstTime: () => set({ priorizarFirstTime: true }),
+  setLoading: (value) => set({ loading: value }),
   addItem: (item) =>
     set((state) => {
       const index = state.carrinho.itens.findIndex((i) => i.id === item.id);
