@@ -27,9 +27,10 @@ import { DismissKeyboard } from "../../../../../App";
 
 type FooterProps = {
   toEndScreen: () => void;
+  toBudgetEndScreen: () => void;
 };
 
-const Footer: React.FC<FooterProps> = ({ toEndScreen }) => {
+const Footer: React.FC<FooterProps> = ({ toEndScreen, toBudgetEndScreen }) => {
   const { orcamento, setOrcamento, setOriginalOrcamento } = useOrcamentoStore(
     (state) => state
   );
@@ -89,13 +90,13 @@ const Footer: React.FC<FooterProps> = ({ toEndScreen }) => {
         <MainButton
           text={"Finalizar"}
           onPress={() => {
-            toEndScreen();
+            orcamento === null ? toEndScreen() : toBudgetEndScreen();
           }}
         />
       </Flex>
 
       <Flex mt={1} direction="row" align="center" width="100%">
-        {orcamento ? (
+        {orcamento !== null ? (
           <>
             <Heading
               fontSize="sm"

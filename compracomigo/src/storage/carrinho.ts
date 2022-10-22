@@ -45,8 +45,16 @@ type carrinhoState = {
     index: number,
     itemId: string | number
   ) => void;
+  changeCarrinhoItemForSuggestedBySuggestedObject: (
+    suggestedItem: Produto,
+    itemId: string | number
+  ) => void;
   toChangeCarrinhoItemID: string | number;
   setToChangeCarrinhoItemID: (id: string | number) => void;
+  removeItemModalIsOpen: boolean;
+  setRemoveItemModalIsOpen: (value: boolean) => void;
+  selectedItemToRemove: itemCarrinho | null;
+  setSelectedItemToRemove: (item: itemCarrinho) => void;
 };
 
 // // Apenas para testes
@@ -99,6 +107,8 @@ const useStore = create<carrinhoState>((set) => ({
   loading: false,
   priorizarFirstTime: false,
   priorizarModalVisible: false,
+  removeItemModalIsOpen: false,
+  selectedItemToRemove: null,
   setPriorizarModalVisible: (value) => set({ priorizarModalVisible: value }),
   setPriorizarFirstTime: () => set({ priorizarFirstTime: true }),
   setLoading: (value) => set({ loading: value }),
@@ -213,6 +223,45 @@ const useStore = create<carrinhoState>((set) => ({
       state.toChangeCarrinhoItemID = id;
       return {
         toChangeCarrinhoItemID: state.toChangeCarrinhoItemID,
+      };
+    }),
+  setRemoveItemModalIsOpen: (value: boolean) =>
+    set((state) => {
+      return { removeItemModalIsOpen: value };
+    }),
+  setSelectedItemToRemove: (item: itemCarrinho) =>
+    set((state) => {
+      return { selectedItemToRemove: item };
+    }),
+  changeCarrinhoItemForSuggestedBySuggestedObject: (suggestedItem, itemId) =>
+    set((state) => {
+      const carrinhoItem = state.carrinho.itens.find((i) => i.id === itemId);
+      const carrinhoAlreadyHasItem = state.carrinho.itens.find(
+        (i) => i.id === suggestedItem.id
+      );
+      if (carrinhoItem && carrinhoAlreadyHasItem) {
+        carrinhoAlreadyHasItem.quantidade += 1;
+        carrinhoAlreadyHasItem.valorTotal += suggestedItem.valor;
+        state.carrinho.itens = state.carrinho.itens.filter(
+          (i) => i.id !== carrinhoItem.id
+        );
+      } else if (carrinhoItem) {
+        carrinhoItem.id = suggestedItem.id;
+        carrinhoItem.nome = suggestedItem.nome;
+        carrinhoItem.categoria = suggestedItem.categoria;
+        carrinhoItem.image = suggestedItem.image_url;
+        carrinhoItem.preco = suggestedItem.valor;
+        carrinhoItem.valorTotal = suggestedItem.valor * carrinhoItem.quantidade;
+      }
+      // update carrinho valorTotal
+      state.carrinho.valorTotal = state.carrinho.itens.reduce(
+        (acc, item) => acc + item.valorTotal,
+        0
+      );
+
+      return {
+        carrinho: state.carrinho,
+        valortotal: state.carrinho.valorTotal,
       };
     }),
 }));

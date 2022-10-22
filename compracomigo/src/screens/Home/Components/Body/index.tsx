@@ -24,13 +24,18 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useLeitorBarraStore } from "../../../../storage/leitorBarra";
 import SuggestedItemsModal from "../../../../components/SugestedItemsModal";
 import ItemPriorizadoModal from "../../../../components/ItemPriorizadoModal";
+import RemoveItemModal from "../../../../components/ItemQtdButton/RemoveItemModal";
 
 // import { Container } from './styles';
 
 const Body: React.FC = () => {
-  const { carrinho, suggestedItems, loading } = useCarrinhoStore(
-    (state) => state
-  );
+  const {
+    carrinho,
+    suggestedItems,
+    loading,
+    removeItemModalIsOpen,
+    setRemoveItemModalIsOpen,
+  } = useCarrinhoStore((state) => state);
 
   const { askForCameraPermission } = useLeitorBarraStore((state) => state);
   const renderItem = useCallback(
@@ -42,6 +47,10 @@ const Body: React.FC = () => {
     <Box height="70%" p={4}>
       {suggestedItems.length > 0 && <SuggestedItemsModal />}
       <ItemPriorizadoModal />
+      <RemoveItemModal
+        isOpen={removeItemModalIsOpen}
+        setIsOpen={() => setRemoveItemModalIsOpen(true)}
+      />
 
       {loading && carrinho.itens.length === 0 ? (
         <Flex width="100%" height="100%" align="center" rounded="md" zIndex={0}>

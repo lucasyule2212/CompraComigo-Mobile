@@ -41,8 +41,8 @@ const Final: React.FC<FinalProps> = ({ navigation }: FinalProps) => {
         bgColor="#80664E"
         width="100%"
         height="60%"
-        borderRadius="50% 50% 0% 0% / 26% 26% 0% 0% "
-        justify="space-around"
+        borderTopRadius={50}
+        justify="space-around"   
       >
         <Flex align="center">
           <Heading size="2xl" mb={4} color={globalStyles.mainTextColor}>

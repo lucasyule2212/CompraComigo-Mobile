@@ -17,16 +17,27 @@ import MainButton from "../MainButton";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useSugestaoModalStore } from "../../storage/sugestaoModal";
 import { useOrcamentoStore } from "../../storage/orcamento";
+import { useCarrinhoEconomicoStore } from "../../storage/carrinhoEconomico";
 
 // import { Container } from './styles';
 
-const SuggestedItemsModal: React.FC = () => {
+type SugestedItemsModalProps = {
+  isCarrinhoEconomico?: boolean;
+};
+
+const SuggestedItemsModal: React.FC<SugestedItemsModalProps> = ({
+  isCarrinhoEconomico = false,
+}: SugestedItemsModalProps) => {
   const {
     suggestedItems,
     changeCarrinhoItemForSuggestedByIndex,
     toChangeCarrinhoItemID,
     carrinho,
+    changeCarrinhoItemForSuggestedBySuggestedObject,
   } = useCarrinhoStore((state) => state);
+  const { changeCarrinhoItemForSuggested } = useCarrinhoEconomicoStore(
+    (state) => state
+  );
 
   const { originalOrcamento, setOrcamento } = useOrcamentoStore(
     (state) => state
@@ -66,8 +77,18 @@ const SuggestedItemsModal: React.FC = () => {
   }
 
   function handleChangeItemToSuggested() {
-    changeCarrinhoItemForSuggestedByIndex(index, toChangeCarrinhoItemID);
+    if (isCarrinhoEconomico) {
+      changeCarrinhoItemForSuggested(toChangeCarrinhoItemID, displayedItem);
+      changeCarrinhoItemForSuggestedBySuggestedObject(
+        displayedItem,
+        toChangeCarrinhoItemID
+      );
+    } else {
+      changeCarrinhoItemForSuggestedByIndex(index, toChangeCarrinhoItemID);
+    }
     if (originalOrcamento) {
+      console.log("update");
+
       updateOrcamento();
     }
     setVisible(false);

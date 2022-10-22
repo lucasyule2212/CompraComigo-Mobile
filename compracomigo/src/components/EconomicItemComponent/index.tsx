@@ -19,12 +19,13 @@ import { AntDesign } from "@expo/vector-icons";
 import { api } from "../../services/api";
 import { useSugestaoModalStore } from "../../storage/sugestaoModal";
 // import { Container } from './styles';
+import { ItemCarrinhoEconomico } from "../../storage/carrinhoEconomico";
 
 type ItemComponentProps = {
-  item: itemCarrinho;
+  item: ItemCarrinhoEconomico;
 };
 
-const ItemComponent: React.FC<ItemComponentProps> = ({
+const EconomicItemComponent: React.FC<ItemComponentProps> = ({
   item,
 }: ItemComponentProps) => {
   const {
@@ -35,25 +36,16 @@ const ItemComponent: React.FC<ItemComponentProps> = ({
     setPriorizarFirstTime,
     setPriorizarModalVisible,
   } = useCarrinhoStore((state) => state);
+
   const { setVisible, loading, setLoading } = useSugestaoModalStore(
     (state) => state
   );
-  const handlePriorizarItem = useCallback((item: itemCarrinho) => {
-    if (priorizarFirstTime === false) {
-      setPriorizarFirstTime();
-      setPriorizarModalVisible(true);
-    }
-    priorizarItem(item);
-  }, []);
 
   async function handleSugestItems() {
     try {
-      setLoading(true);
       setVisible(true);
-      const { data } = await api.get(`/produtos/sugestoes/${item.id}`);
       setToChangeCarrinhoItemID(item.id);
-      setSuggestedItems(data);
-      setLoading(false);
+      setSuggestedItems(item.opcoes);
     } catch (error) {
       console.log(error);
     }
@@ -69,7 +61,6 @@ const ItemComponent: React.FC<ItemComponentProps> = ({
       direction="row"
       alignItems="center"
     >
-      
       <Box width={20} height={20}>
         <Image
           height={20}
@@ -81,28 +72,14 @@ const ItemComponent: React.FC<ItemComponentProps> = ({
         />
       </Box>
       <Flex direction="column" width="100%" ml={4}>
-        <Flex width="70%" direction="row" justifyContent="space-between">
+        <Flex width="100%" direction="row" justifyContent="space-between">
           <Heading
             color={globalStyles.secondaryTextColor}
-            maxW={200}
+            maxW={300}
             isTruncated
           >
             {item.nome}
           </Heading>
-
-          {/* DESENVOLVER BOTÃO DE PRIORIZAR ITEM */}
-          <IconButton
-            width={10}
-            height={10}
-            icon={<Icon as={AntDesign} name="star" />}
-            rounded="full"
-            _icon={{
-              size: "xl",
-              color: item.priorizado ? "yellow.400" : "gray.400",
-            }}
-            _pressed={{ bgColor: "transparent", _icon: { size: "2xl" } }}
-            onPress={() => handlePriorizarItem(item)}
-          />
         </Flex>
         <Flex
           width="70%"
@@ -112,13 +89,17 @@ const ItemComponent: React.FC<ItemComponentProps> = ({
           alignItems="start"
         >
           <MainButton
-            text="Sugestões"
+            text="Ver Opções"
             colorScheme="secondary"
-            width={20}
+            width={32}
             onPress={handleSugestItems}
             fontSize="xs"
           />
-          <ItemQtdButton qtd={item.quantidade} item={item} />
+          <ItemQtdButton
+            qtd={item.quantidade}
+            item={item}
+            displayQtdButtons={false}
+          />
         </Flex>
         <Flex
           width="70%"
@@ -126,23 +107,61 @@ const ItemComponent: React.FC<ItemComponentProps> = ({
           justifyContent="space-between"
           alignItems="center"
         >
-          <Heading fontSize="lg" color={globalStyles.secondaryColor}>
+          <Heading fontSize="md" color={globalStyles.secondaryColor}>
+            Atual:
+          </Heading>
+          <Heading fontSize="md" color={globalStyles.secondaryColor}>
             R$
             {item.preco.toLocaleString("pt-br", {
               minimumFractionDigits: 2,
             })}
             /uni.
           </Heading>
-          <Heading fontSize="2xl" color={globalStyles.secondaryColor}>
+          <Heading fontSize="xl" color={globalStyles.secondaryColor}>
             R$
             {item.valorTotal.toLocaleString("pt-br", {
               minimumFractionDigits: 2,
             })}
           </Heading>
         </Flex>
+        <Flex
+          width="70%"
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+          
+        >
+          {item.opcoes.length && item.opcoes.length > 0 ? (
+            <>
+              <Heading fontSize="sm" color={globalStyles.primaryColor}>
+                +Barato:
+              </Heading>
+              <Heading fontSize="sm" color={globalStyles.primaryColor}>
+                R$
+                {item.opcoes[0].valor.toLocaleString("pt-br", {
+                  minimumFractionDigits: 2,
+                })}
+                /uni.
+              </Heading>
+              <Heading fontSize="md" color={globalStyles.primaryColor}>
+                R$
+                {(item.opcoes[0].valor * item.quantidade).toLocaleString(
+                  "pt-br",
+                  {
+                    minimumFractionDigits: 2,
+                  }
+                )}
+              </Heading>
+            </>
+          ) : (
+            <Heading fontSize="md" color={globalStyles.primaryColor}>
+              É o mais barato!
+            </Heading>
+          )}
+        </Flex>
       </Flex>
     </Flex>
   );
 };
 
-export default ItemComponent;
+export default EconomicItemComponent;
