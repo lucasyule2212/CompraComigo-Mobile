@@ -204,7 +204,7 @@ const useStore = create<carrinhoState>((set) => ({
         carrinhoItem.categoria = item.categoria;
         carrinhoItem.image = item.image_url;
         carrinhoItem.preco = item.valor;
-        carrinhoItem.valorTotal = item.valor;
+        carrinhoItem.valorTotal = item.valor * carrinhoItem.quantidade;
       }
       // update carrinho valorTotal
       state.carrinho.valorTotal = state.carrinho.itens.reduce(
@@ -237,7 +237,6 @@ const useStore = create<carrinhoState>((set) => ({
     set((state) => {
       const carrinhoItem = state.carrinho.itens.find((i) => i.id === itemId);
       if (carrinhoItem) {
-        console.log("carrinhoItem");
         carrinhoItem.id = suggestedItem.id;
         carrinhoItem.nome = suggestedItem.nome;
         carrinhoItem.categoria = suggestedItem.categoria;
@@ -250,7 +249,6 @@ const useStore = create<carrinhoState>((set) => ({
         (acc, item) => acc + item.valorTotal,
         0
       );
-      console.log("state.carrinho", state.carrinho);
 
       return {
         carrinho: state.carrinho,
