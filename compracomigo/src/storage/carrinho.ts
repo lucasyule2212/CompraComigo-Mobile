@@ -236,16 +236,8 @@ const useStore = create<carrinhoState>((set) => ({
   changeCarrinhoItemForSuggestedBySuggestedObject: (suggestedItem, itemId) =>
     set((state) => {
       const carrinhoItem = state.carrinho.itens.find((i) => i.id === itemId);
-      const carrinhoAlreadyHasItem = state.carrinho.itens.find(
-        (i) => i.id === suggestedItem.id
-      );
-      if (carrinhoItem && carrinhoAlreadyHasItem) {
-        carrinhoAlreadyHasItem.quantidade += 1;
-        carrinhoAlreadyHasItem.valorTotal += suggestedItem.valor;
-        state.carrinho.itens = state.carrinho.itens.filter(
-          (i) => i.id !== carrinhoItem.id
-        );
-      } else if (carrinhoItem) {
+      if (carrinhoItem) {
+        console.log("carrinhoItem");
         carrinhoItem.id = suggestedItem.id;
         carrinhoItem.nome = suggestedItem.nome;
         carrinhoItem.categoria = suggestedItem.categoria;
@@ -258,6 +250,7 @@ const useStore = create<carrinhoState>((set) => ({
         (acc, item) => acc + item.valorTotal,
         0
       );
+      console.log("state.carrinho", state.carrinho);
 
       return {
         carrinho: state.carrinho,

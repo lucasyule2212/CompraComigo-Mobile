@@ -10,7 +10,7 @@ import {
   Spinner,
   Box,
 } from "native-base";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useCarrinhoStore } from "../../storage/carrinho";
 import { globalStyles } from "../../styles/globalStyles";
 import MainButton from "../MainButton";
@@ -44,11 +44,16 @@ const SuggestedItemsModal: React.FC<SugestedItemsModalProps> = ({
   );
 
   const [displayedItem, setDisplayedItem] = useState(suggestedItems[0]);
+
+  useEffect(() => {
+    setDisplayedItem(suggestedItems[0]);
+  }, [suggestedItems]);
+
   const [index, setIndex] = useState(0);
   const { visible, setVisible, loading } = useSugestaoModalStore(
     (state) => state
   );
-
+  
   function nextDisplayedItem() {
     const index = suggestedItems.indexOf(displayedItem);
     if (index + 1 < suggestedItems.length) {
@@ -91,6 +96,8 @@ const SuggestedItemsModal: React.FC<SugestedItemsModalProps> = ({
 
       updateOrcamento();
     }
+    setDisplayedItem(suggestedItems[0]);
+    setIndex(0);
     setVisible(false);
   }
 
@@ -103,35 +110,51 @@ const SuggestedItemsModal: React.FC<SugestedItemsModalProps> = ({
         </Modal.Header>
         <Modal.Body alignItems="center" justifyContent="center" flexDir="row">
           <Skeleton isLoaded={!loading} rounded="md" height={40}>
-            <IconButton
-              backgroundColor="transparent"
-              icon={<Icon as={MaterialIcons} name="keyboard-arrow-left" />}
-              rounded="full"
-              _icon={{
-                size: "5xl",
-                color: "gray.400",
-              }}
-              _pressed={{ bgColor: "gray.200" }}
-              onPress={previousDisplayedItem}
-            />
+            {
+              // display button only if there is a previous item
+              index - 1 >= 0 ? (
+                <IconButton
+                  backgroundColor="transparent"
+                  icon={<Icon as={MaterialIcons} name="keyboard-arrow-left" />}
+                  rounded="full"
+                  _icon={{
+                    size: "5xl",
+                    color: "gray.400",
+                  }}
+                  _pressed={{ bgColor: "gray.200" }}
+                  onPress={previousDisplayedItem}
+                />
+              ) : (
+                  <Box w={16}></Box>
+              )
+            }
+
             <Image
               source={{ uri: displayedItem.image_url }}
               alt="Imagem do item"
               height={40}
               width={40}
+
               // resizeMode="contain"
             />
-            <IconButton
-              backgroundColor="transparent"
-              icon={<Icon as={MaterialIcons} name="keyboard-arrow-right" />}
-              rounded="full"
-              _icon={{
-                size: "5xl",
-                color: "gray.400",
-              }}
-              _pressed={{ bgColor: "gray.200" }}
-              onPress={nextDisplayedItem}
-            />
+            {
+              // display button only if has next item
+              index + 1 < suggestedItems.length ? (
+                <IconButton
+                  backgroundColor="transparent"
+                  icon={<Icon as={MaterialIcons} name="keyboard-arrow-right" />}
+                  rounded="full"
+                  _icon={{
+                    size: "5xl",
+                    color: "gray.400",
+                  }}
+                  _pressed={{ bgColor: "gray.200" }}
+                  onPress={nextDisplayedItem}
+                />
+              ): (
+                <Box w={16}></Box>
+            )
+            }
           </Skeleton>
         </Modal.Body>
         <Modal.Footer
