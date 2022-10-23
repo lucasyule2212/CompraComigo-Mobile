@@ -78,7 +78,7 @@ const Body: React.FC = () => {
           />
         </Flex>
       ) : (
-        <View>
+        <Flex flex={1}>
           <FlatList
             contentContainerStyle={{ flexGrow: 1 }}
             data={carrinho.itens}
@@ -90,7 +90,7 @@ const Body: React.FC = () => {
             onMoveShouldSetResponder={() => true}
           />
           {loading && <Spinner color="warning.500" size="sm" />}
-        </View>
+        </Flex>
       )}
 
       <Box position="absolute" bottom={0} right={8}>

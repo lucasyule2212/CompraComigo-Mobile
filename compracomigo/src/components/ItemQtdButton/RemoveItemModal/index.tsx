@@ -49,12 +49,12 @@ const RemoveItemModal: React.FC<RemoveItemModalProps> = ({
               colorScheme="secondary"
               onPress={() => {
                 if (selectedItemToRemove) {
-                  reduceItem(selectedItemToRemove);
                   if (orcamento) {
-                    setRemoveItemModalIsOpen;
+                    setRemoveItemModalIsOpen(true);
                     const newOrçamento = orcamento + selectedItemToRemove.preco;
                     setOrcamento(newOrçamento);
                   }
+                  reduceItem(selectedItemToRemove);
                 }
                 setRemoveItemModalIsOpen(false);
               }}

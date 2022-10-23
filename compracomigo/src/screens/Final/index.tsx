@@ -8,6 +8,7 @@ import MainButton from "../../components/MainButton";
 import { useOrcamentoStore } from "../../storage/orcamento";
 import { RootParamList } from "../../routes/app.routes";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useCarrinhoEconomicoStore } from "../../storage/carrinhoEconomico";
 // import { Container } from './styles';
 
 type FinalProps = {
@@ -16,6 +17,7 @@ type FinalProps = {
 
 const Final: React.FC<FinalProps> = ({ navigation }: FinalProps) => {
   const { carrinho, clearCarrinho } = useCarrinhoStore((state) => state);
+  const { setCarrinhoEconomico } = useCarrinhoEconomicoStore((state) => state);
   const { clearOrcamento } = useOrcamentoStore((state) => state);
   return (
     <Flex
@@ -42,7 +44,7 @@ const Final: React.FC<FinalProps> = ({ navigation }: FinalProps) => {
         width="100%"
         height="60%"
         borderTopRadius={50}
-        justify="space-around"   
+        justify="space-around"
       >
         <Flex align="center">
           <Heading size="2xl" mb={4} color={globalStyles.mainTextColor}>
@@ -56,6 +58,7 @@ const Final: React.FC<FinalProps> = ({ navigation }: FinalProps) => {
             onPress={() => {
               clearCarrinho();
               clearOrcamento();
+              setCarrinhoEconomico(null);
               navigation.navigate("home");
             }}
           />

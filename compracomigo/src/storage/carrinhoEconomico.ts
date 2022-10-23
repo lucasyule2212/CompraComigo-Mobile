@@ -17,7 +17,7 @@ export type CarrinhoEconomicoState = {
     itemId: string | number,
     suggestedItem: Produto
   ) => void;
-  setCarrinhoEconomico: (carrinho: CarrinhoEconomicoType) => void;
+  setCarrinhoEconomico: (carrinho: CarrinhoEconomicoType | null) => void;
   setLoading: (value: boolean) => void;
 };
 
@@ -53,7 +53,7 @@ export const useCarrinhoEconomicoStore = create<CarrinhoEconomicoState>(
             return item;
           }
         );
-        
+
         return {
           ...state,
           carrinhoEconomico: {

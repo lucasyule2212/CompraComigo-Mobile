@@ -75,7 +75,7 @@ const EconomicItemComponent: React.FC<ItemComponentProps> = ({
         <Flex width="100%" direction="row" justifyContent="space-between">
           <Heading
             color={globalStyles.secondaryTextColor}
-            maxW={300}
+            maxW={270}
             isTruncated
           >
             {item.nome}
