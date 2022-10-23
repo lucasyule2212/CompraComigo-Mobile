@@ -6,6 +6,9 @@ import {
   Flex,
   IconButton,
   Icon,
+  Skeleton,
+  Spinner,
+  Box,
 } from "native-base";
 import React, { useState } from "react";
 import { useCarrinhoStore } from "../../storage/carrinho";
@@ -14,16 +17,27 @@ import MainButton from "../MainButton";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useSugestaoModalStore } from "../../storage/sugestaoModal";
 import { useOrcamentoStore } from "../../storage/orcamento";
+import { useCarrinhoEconomicoStore } from "../../storage/carrinhoEconomico";
 
 // import { Container } from './styles';
 
-const SuggestedItemsModal: React.FC = () => {
+type SugestedItemsModalProps = {
+  isCarrinhoEconomico?: boolean;
+};
+
+const SuggestedItemsModal: React.FC<SugestedItemsModalProps> = ({
+  isCarrinhoEconomico = false,
+}: SugestedItemsModalProps) => {
   const {
     suggestedItems,
     changeCarrinhoItemForSuggestedByIndex,
     toChangeCarrinhoItemID,
     carrinho,
+    changeCarrinhoItemForSuggestedBySuggestedObject,
   } = useCarrinhoStore((state) => state);
+  const { changeCarrinhoItemForSuggested } = useCarrinhoEconomicoStore(
+    (state) => state
+  );
 
   const { originalOrcamento, setOrcamento } = useOrcamentoStore(
     (state) => state
@@ -31,7 +45,9 @@ const SuggestedItemsModal: React.FC = () => {
 
   const [displayedItem, setDisplayedItem] = useState(suggestedItems[0]);
   const [index, setIndex] = useState(0);
-  const { visible, setVisible } = useSugestaoModalStore((state) => state);
+  const { visible, setVisible, loading } = useSugestaoModalStore(
+    (state) => state
+  );
 
   function nextDisplayedItem() {
     const index = suggestedItems.indexOf(displayedItem);
@@ -61,8 +77,18 @@ const SuggestedItemsModal: React.FC = () => {
   }
 
   function handleChangeItemToSuggested() {
-    changeCarrinhoItemForSuggestedByIndex(index, toChangeCarrinhoItemID);
+    if (isCarrinhoEconomico) {
+      changeCarrinhoItemForSuggested(toChangeCarrinhoItemID, displayedItem);
+      changeCarrinhoItemForSuggestedBySuggestedObject(
+        displayedItem,
+        toChangeCarrinhoItemID
+      );
+    } else {
+      changeCarrinhoItemForSuggestedByIndex(index, toChangeCarrinhoItemID);
+    }
     if (originalOrcamento) {
+      console.log("update");
+
       updateOrcamento();
     }
     setVisible(false);
@@ -76,56 +102,66 @@ const SuggestedItemsModal: React.FC = () => {
           <Heading color={globalStyles.primaryColor}>Sugestões</Heading>
         </Modal.Header>
         <Modal.Body alignItems="center" justifyContent="center" flexDir="row">
-          <IconButton
-            backgroundColor="transparent"
-            icon={<Icon as={MaterialIcons} name="keyboard-arrow-left" />}
-            rounded="full"
-            _icon={{
-              size: "5xl",
-              color: "gray.400",
-            }}
-            _pressed={{ bgColor: "gray.200" }}
-            onPress={previousDisplayedItem}
-          />
-          <Image
-            source={{ uri: displayedItem.image_url }}
-            alt="Imagem do item"
-            height={40}
-            width={40}
-            // resizeMode="contain"
-          />
-          <IconButton
-            backgroundColor="transparent"
-            icon={<Icon as={MaterialIcons} name="keyboard-arrow-right" />}
-            rounded="full"
-            _icon={{
-              size: "5xl",
-              color: "gray.400",
-            }}
-            _pressed={{ bgColor: "gray.200" }}
-            onPress={nextDisplayedItem}
-          />
+          <Skeleton isLoaded={!loading} rounded="md" height={40}>
+            <IconButton
+              backgroundColor="transparent"
+              icon={<Icon as={MaterialIcons} name="keyboard-arrow-left" />}
+              rounded="full"
+              _icon={{
+                size: "5xl",
+                color: "gray.400",
+              }}
+              _pressed={{ bgColor: "gray.200" }}
+              onPress={previousDisplayedItem}
+            />
+            <Image
+              source={{ uri: displayedItem.image_url }}
+              alt="Imagem do item"
+              height={40}
+              width={40}
+              // resizeMode="contain"
+            />
+            <IconButton
+              backgroundColor="transparent"
+              icon={<Icon as={MaterialIcons} name="keyboard-arrow-right" />}
+              rounded="full"
+              _icon={{
+                size: "5xl",
+                color: "gray.400",
+              }}
+              _pressed={{ bgColor: "gray.200" }}
+              onPress={nextDisplayedItem}
+            />
+          </Skeleton>
         </Modal.Body>
         <Modal.Footer
           justifyContent="center"
           bgColor={globalStyles.primaryColor}
         >
           <Flex justify="center" align="center">
-            <Heading fontSize="lg" color={globalStyles.mainTextColor}>
-              {displayedItem.nome}
-            </Heading>
+            {loading ? (
+              <Flex height={20} justify="center" align="center">
+                <Spinner color="white" />
+              </Flex>
+            ) : (
+              <>
+                <Heading fontSize="lg" color={globalStyles.mainTextColor}>
+                  {displayedItem.nome}
+                </Heading>
 
-            <Heading mb={4} color={globalStyles.mainTextColor}>
-              R${" "}
-              {displayedItem.valor.toLocaleString("pt-BR", {
-                minimumFractionDigits: 2,
-              })}
-            </Heading>
-            <MainButton
-              onPress={handleChangeItemToSuggested}
-              text="Trocar"
-              width={20}
-            />
+                <Heading mb={4} color={globalStyles.mainTextColor}>
+                  R${" "}
+                  {displayedItem.valor.toLocaleString("pt-BR", {
+                    minimumFractionDigits: 2,
+                  })}
+                </Heading>
+                <MainButton
+                  onPress={handleChangeItemToSuggested}
+                  text="Trocar"
+                  width={20}
+                />
+              </>
+            )}
           </Flex>
         </Modal.Footer>
       </Modal.Content>

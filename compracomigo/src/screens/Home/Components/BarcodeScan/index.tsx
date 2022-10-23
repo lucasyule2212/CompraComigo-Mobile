@@ -13,11 +13,12 @@ const BarcodeScan: React.FC = () => {
   const { scanned, setHasPermission, setScanned } = useLeitorBarraStore(
     (state) => state
   );
-  const { addItem } = useCarrinhoStore((state) => state);
+  const { addItem, setLoading } = useCarrinhoStore((state) => state);
   const { setOrcamento, orcamento } = useOrcamentoStore((state) => state);
 
   async function handleBarCodeScanned({ data }: { data: string }) {
     setHasPermission(false);
+    setLoading(true);
     const { data: produto } = await api.get(`/produtos/${data}`);
 
     addItem(produto);
@@ -25,6 +26,7 @@ const BarcodeScan: React.FC = () => {
       const newOrcamento = orcamento - produto.preco;
       setOrcamento(newOrcamento);
     }
+    setLoading(false);
   }
 
   return (

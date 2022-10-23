@@ -8,6 +8,7 @@ import {
   IconButton,
   Icon,
   useDisclose,
+  Spinner,
 } from "native-base";
 import { useCarrinhoStore } from "../../../../storage/carrinho";
 import { globalStyles } from "../../../../styles/globalStyles";
@@ -22,11 +23,19 @@ import { useCallback } from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useLeitorBarraStore } from "../../../../storage/leitorBarra";
 import SuggestedItemsModal from "../../../../components/SugestedItemsModal";
+import ItemPriorizadoModal from "../../../../components/ItemPriorizadoModal";
+import RemoveItemModal from "../../../../components/ItemQtdButton/RemoveItemModal";
 
 // import { Container } from './styles';
 
 const Body: React.FC = () => {
-  const { carrinho, suggestedItems } = useCarrinhoStore((state) => state);
+  const {
+    carrinho,
+    suggestedItems,
+    loading,
+    removeItemModalIsOpen,
+    setRemoveItemModalIsOpen,
+  } = useCarrinhoStore((state) => state);
 
   const { askForCameraPermission } = useLeitorBarraStore((state) => state);
   const renderItem = useCallback(
@@ -37,8 +46,20 @@ const Body: React.FC = () => {
   return (
     <Box height="70%" p={4}>
       {suggestedItems.length > 0 && <SuggestedItemsModal />}
+      <ItemPriorizadoModal />
+      <RemoveItemModal
+        isOpen={removeItemModalIsOpen}
+        setIsOpen={() => setRemoveItemModalIsOpen(true)}
+      />
 
-      {carrinho.itens.length === 0 ? (
+      {loading && carrinho.itens.length === 0 ? (
+        <Flex width="100%" height="100%" align="center" rounded="md" zIndex={0}>
+          <Spinner color="warning.500" size="lg" />
+          <Text fontWeight={500} mt={2} color="orange.400">
+            Adicionando item...
+          </Text>
+        </Flex>
+      ) : carrinho.itens.length === 0 ? (
         <Flex width="100%" align="center" justify="center" mb={6} mt={24}>
           <Image source={carrinhoImage} alt="Imagem carrinho" />
           <Heading color="gray.500" mb={2} mt={6}>
@@ -57,7 +78,7 @@ const Body: React.FC = () => {
           />
         </Flex>
       ) : (
-        <View style={{ flex: 1, flexGrow: 1, height: "100%" }}>
+        <Flex flex={1}>
           <FlatList
             contentContainerStyle={{ flexGrow: 1 }}
             data={carrinho.itens}
@@ -68,7 +89,8 @@ const Body: React.FC = () => {
             showsVerticalScrollIndicator={false}
             onMoveShouldSetResponder={() => true}
           />
-        </View>
+          {loading && <Spinner color="warning.500" size="sm" />}
+        </Flex>
       )}
 
       <Box position="absolute" bottom={0} right={8}>
