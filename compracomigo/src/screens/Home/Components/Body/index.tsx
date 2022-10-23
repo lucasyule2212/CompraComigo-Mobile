@@ -9,6 +9,7 @@ import {
   Icon,
   useDisclose,
   Spinner,
+  FlatList,
 } from "native-base";
 import { useCarrinhoStore } from "../../../../storage/carrinho";
 import { globalStyles } from "../../../../styles/globalStyles";
@@ -17,9 +18,9 @@ import ItemComponent from "../../../../components/ItemComponent";
 import carrinhoImage from "./assets/carrinho.png";
 import scan from "./assets/scan.png";
 import seta from "./assets/seta.png";
-import { FlatList, View, ScrollView } from "react-native";
+import { View, ScrollView, TouchableWithoutFeedback } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useCallback } from "react";
+import React, { useCallback } from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useLeitorBarraStore } from "../../../../storage/leitorBarra";
 import SuggestedItemsModal from "../../../../components/SugestedItemsModal";
@@ -78,19 +79,17 @@ const Body: React.FC = () => {
           />
         </Flex>
       ) : (
-        <Flex flex={1}>
+        <View style={{ flex: 1 }}>
           <FlatList
-            contentContainerStyle={{ flexGrow: 1 }}
             data={carrinho.itens}
             renderItem={renderItem}
             keyExtractor={(item) => item.id.toString()}
             ListFooterComponent={<View style={{ height: 40 }} />}
-            onEndReachedThreshold={0.5}
             showsVerticalScrollIndicator={false}
-            onMoveShouldSetResponder={() => true}
+            onEndReachedThreshold={0.5}
           />
           {loading && <Spinner color="warning.500" size="sm" />}
-        </Flex>
+        </View>
       )}
 
       <Box position="absolute" bottom={0} right={8}>
